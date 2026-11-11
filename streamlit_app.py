@@ -113,7 +113,7 @@ def _df_from_items(items):
     } for it in items])
 
 
-def render_payload(payload: dict):
+def render_payload(payload: dict, key: str = "0"):
     t = payload.get("type")
 
     if t == "text":
@@ -128,7 +128,7 @@ def render_payload(payload: dict):
         st.caption("By priority")
         pr = pd.DataFrame(payload["by_priority"]).rename(columns={"rank": "Priority", "count": "Count"})
         pr["Priority"] = pr["Priority"].map(lambda r: f"P{r}")
-        st.bar_chart(pr.set_index("Priority"))
+        st.bar_chart(pr.set_index("Priority"), key=f"sum_{key}")
         st.caption(f"Source: {payload.get('source','')} · {payload.get('loaded_at','')}")
 
     elif t in ("incidents", "count"):
@@ -141,17 +141,18 @@ def render_payload(payload: dict):
         cap = f"{total} incident(s)" + (f" — showing first {shown}" if shown < total else "")
         st.caption(cap)
         df = _df_from_items(payload["items"])
-        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.dataframe(df, use_container_width=True, hide_index=True, key=f"df_{key}")
         st.download_button("Download these as CSV",
                            df.to_csv(index=False).encode("utf-8"),
-                           file_name="d4u_filtered.csv", mime="text/csv")
+                           file_name="d4u_filtered.csv", mime="text/csv",
+                           key=f"dl_{key}")
 
     elif t == "group":
         st.caption(f"{payload['label']} — {payload['distinct']} group(s), {payload['total']} incidents")
         g = pd.DataFrame(payload["groups"]).rename(columns={"key": payload["label"], "count": "Count"})
-        st.dataframe(g, use_container_width=True, hide_index=True)
+        st.dataframe(g, use_container_width=True, hide_index=True, key=f"gdf_{key}")
         chart_df = g.set_index(payload["label"])["Count"]
-        st.bar_chart(chart_df)
+        st.bar_chart(chart_df, key=f"gch_{key}")
 
     elif t == "chart":
         st.caption(f"{payload['title']} ({payload['total']} incidents)")
@@ -160,7 +161,7 @@ def render_payload(payload: dict):
         for d in payload["datasets"]:
             data[d["label"]] = d["data"]
         chart_df = pd.DataFrame(data, index=payload["labels"])
-        st.bar_chart(chart_df)   # stacked-style multi-series bar chart
+        st.bar_chart(chart_df, key=f"mch_{key}")   # multi-series monthly chart
 
     else:
         st.write(payload)
@@ -190,23 +191,20 @@ for i, (label, q) in enumerate(quick):
     if qcols[i].button(label, use_container_width=True):
         pending_quick = q
 
-# Replay chat history
-for role, payload in st.session_state.messages:
+# Replay chat history (unique key per message to avoid duplicate element IDs)
+for idx, (role, payload) in enumerate(st.session_state.messages):
     with st.chat_message(role):
         if role == "user":
             st.markdown(payload)
         else:
-            render_payload(payload)
+            render_payload(payload, key=f"hist{idx}")
 
 # Input (typed or from a quick button)
 typed = st.chat_input("Ask about your D4U incidents…")
 user_msg = typed or pending_quick
 
 if user_msg:
-    st.session_state.messages.append(("user", user_msg))
-    with st.chat_message("user"):
-        st.markdown(user_msg)
     payload = handle_message(user_msg, state)
+    st.session_state.messages.append(("user", user_msg))
     st.session_state.messages.append(("assistant", payload))
-    with st.chat_message("assistant"):
-        render_payload(payload)
+    st.rerun()

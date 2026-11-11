@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+# Never commit real incident exports
+incident*.csv
+*_export.csv
+*.xlsx
+!sample_demo.csv

@@ -1,0 +1,11 @@
+number,opened_at,short_description,priority,state,category,assignment_group,assigned_to,u_study,u_study.u_therapeutic_area
+SINC1000001,2026-07-03 10:00:00,Data refresh failing in load study,2 - High,In Progress,Incident,RD_DATA4YOU_L2_COGNIZANT,Alex Rivera (700000001),11111111ABC1001,Oncology
+SINC1000002,2026-07-15 09:30:00,Query not populating on page,3 - Moderate,New,Incident,RD_DATA4YOU_L2_COGNIZANT,,22222222DEF2001,Immunology
+SINC1000003,2026-08-04 14:15:00,Task complete not firing,2 - High,On Hold,Incident,RD_DATA4YOU_L2_COGNIZANT,Priya Menon (700000002),11111111ABC1001,Oncology
+SINC1000004,2026-08-20 08:45:00,Asset deactivation slow,3 - Moderate,Resolved,Incident,RD_DATA4YOU_L2_COGNIZANT,Alex Rivera (700000001),33333333GHI3001,Neuroscience
+SINC1000005,2026-09-10 11:00:00,EDC data point mismatch,4 - Low,Resolved,Request,RD_DATA4YOU_L2_COGNIZANT,Sam Okoro (700000003),22222222DEF2001,Immunology
+SINC1000006,2026-09-22 16:20:00,Login timeout on prod,2 - High,Closed,Incident,RD_DATA4YOU_L2_COGNIZANT,Priya Menon (700000002),11111111ABC1001,Oncology
+SINC1000007,2026-10-01 12:05:00,Pipeline failing at base label,3 - Moderate,In Progress,Incident,RD_DATA4YOU_L2_COGNIZANT,Sam Okoro (700000003),44444444JKL4001,Oncology
+SINC1000008,2026-10-18 13:40:00,Slow average response times,5 - Planning,New,Incident,RD_DATA4YOU_L2_COGNIZANT,Alex Rivera (700000001),33333333GHI3001,Neuroscience
+SINC1000009,2026-10-28 10:10:00,SAE timestamp not refreshed,3 - Moderate,On Hold,Incident,RD_DATA4YOU_L2_COGNIZANT,,44444444JKL4001,Oncology
+SINC1000010,2026-11-05 09:00:00,Visualizations not loading,4 - Low,Canceled,Incident,RD_DATA4YOU_L2_COGNIZANT,Priya Menon (700000002),22222222DEF2001,Immunology

@@ -128,7 +128,8 @@ def render_payload(payload: dict, key: str = "0"):
         st.caption("By priority")
         pr = pd.DataFrame(payload["by_priority"]).rename(columns={"rank": "Priority", "count": "Count"})
         pr["Priority"] = pr["Priority"].map(lambda r: f"P{r}")
-        st.bar_chart(pr.set_index("Priority"), key=f"sum_{key}")
+        pr["Count"] = pd.to_numeric(pr["Count"], errors="coerce").fillna(0)
+        st.bar_chart(pr.set_index("Priority"))
         st.caption(f"Source: {payload.get('source','')} · {payload.get('loaded_at','')}")
 
     elif t in ("incidents", "count"):
@@ -151,8 +152,9 @@ def render_payload(payload: dict, key: str = "0"):
         st.caption(f"{payload['label']} — {payload['distinct']} group(s), {payload['total']} incidents")
         g = pd.DataFrame(payload["groups"]).rename(columns={"key": payload["label"], "count": "Count"})
         st.dataframe(g, use_container_width=True, hide_index=True, key=f"gdf_{key}")
+        g["Count"] = pd.to_numeric(g["Count"], errors="coerce").fillna(0)
         chart_df = g.set_index(payload["label"])["Count"]
-        st.bar_chart(chart_df, key=f"gch_{key}")
+        st.bar_chart(chart_df)
 
     elif t == "chart":
         st.caption(f"{payload['title']} ({payload['total']} incidents)")
@@ -161,7 +163,7 @@ def render_payload(payload: dict, key: str = "0"):
         for d in payload["datasets"]:
             data[d["label"]] = d["data"]
         chart_df = pd.DataFrame(data, index=payload["labels"])
-        st.bar_chart(chart_df, key=f"mch_{key}")   # multi-series monthly chart
+        st.bar_chart(chart_df)   # multi-series monthly chart
 
     else:
         st.write(payload)
